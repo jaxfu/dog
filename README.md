@@ -2,20 +2,13 @@
 
 Go rewrite of the GNU coreutil [cat](https://www.gnu.org/software/coreutils/manual/html_node/cat-invocation.html)
 
-## Arch
+## Todo
 
-### Interface
+- select start and end line
 
-- Filereader :: filepath string -> []string
-
-- Processor :: \*buffer -> []string
-
-### Types
-
-- Line: repr of line of file
-  - Address
-  - Content
-
-- Address: file name and linenum
-  - Filename
-  - Linenum
+- cli flag parsing
+  - required:
+    - filename|'-f'|string
+  - optional:
+    - linenums|'-l'|bool
+    - range|'-r'|texas range e.g. 3..7, 3.., ..7
