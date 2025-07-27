@@ -12,7 +12,11 @@ const (
 	LINES_PREALLOC_SIZE uint = 0
 )
 
-type DogOptions struct{}
+type DogOptions struct {
+	ShowLinenums bool `json:"show_filenums"`
+	Start        uint `json:"start"`
+	End          uint `json:"end"`
+}
 
 type Line struct {
 	Address Address `json:"address"`
@@ -61,9 +65,13 @@ func sanitizePath(fpath string) (string, error) {
 }
 
 func process(scanner *bufio.Scanner, fpath string) ([]Line, error) {
-	// process lines
-	lines := make([]Line, LINES_PREALLOC_SIZE, LINES_PREALLOC_CAP)
+	lines := make(
+		[]Line,
+		LINES_PREALLOC_SIZE,
+		LINES_PREALLOC_CAP,
+	)
 	var line uint = 1
+
 	for scanner.Scan() {
 		lines = append(lines, Line{
 			Address: Address{

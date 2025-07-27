@@ -6,23 +6,24 @@ import (
 	"strconv"
 
 	"github.com/jaxfu/dog"
-	"github.com/jessevdk/go-flags"
+	"github.com/jaxfu/dog/cmd/internal"
 )
 
 func main() {
-	// parse cli args
-	var cliArgs struct {
-		Filepath string `short:"f" long:"filepath" description:"path to target file" required:"true"`
-	}
-	_, err := flags.Parse(&cliArgs)
+	cliArgs, err := internal.GetCliArgs()
+	fmt.Printf("%+v\n", cliArgs)
 	if err != nil {
-		// flags.Parse prints err for some reason?
+		fmt.Printf("error getting cli arguments\n%+v\n", err)
 		os.Exit(1)
 	}
 
-	lines, err := dog.Get(cliArgs.Filepath, dog.DogOptions{})
+	lines, err := dog.Get(
+		cliArgs.Filepath,
+		dog.DogOptions{},
+	)
 	if err != nil {
 		fmt.Println(err)
+		os.Exit(1)
 	}
 
 	// get line num of last line ->
