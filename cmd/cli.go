@@ -10,16 +10,15 @@ import (
 )
 
 func main() {
-	cliArgs, err := internal.GetCliArgs()
-	fmt.Printf("%+v\n", cliArgs)
+	fpath, opts, err := internal.GetCliArgs()
 	if err != nil {
-		fmt.Printf("error getting cli arguments\n%+v\n", err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
 	lines, err := dog.Get(
-		cliArgs.Filepath,
-		dog.DogOptions{},
+		fpath,
+		opts,
 	)
 	if err != nil {
 		fmt.Println(err)

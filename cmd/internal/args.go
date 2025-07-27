@@ -7,18 +7,33 @@ import (
 	"github.com/jaxfu/dog"
 )
 
-type CliArgs struct {
-	Filepath        string
-	Linerange       string
-	Line            uint
-	Offset          uint
-	Start           uint
-	End             uint
-	DisplayLinenums bool
-	Unmatched       []string
+type cliArgs struct {
+	filepath        string
+	linerange       string
+	line            uint
+	offset          uint
+	start           uint
+	end             uint
+	displayLinenums bool
+	unmatched       []string
 }
 
-func GetCliArgs() (CliArgs, error) {
+func GetCliArgs() (string, dog.DogOptions, error) {
+	cliArgs, err := getRawCliArgs()
+	fmt.Printf("%+v\n", cliArgs)
+	if err != nil {
+		return "", dog.DogOptions{}, fmt.Errorf("error getting cli arguments\n%+v\n", err)
+	}
+
+	fpath, opts, err := processCliArgs(cliArgs)
+	if err != nil {
+		return "", dog.DogOptions{}, fmt.Errorf("error getting cli arguments\n%+v\n", err)
+	}
+
+	return fpath, opts, nil
+}
+
+func getRawCliArgs() (cliArgs, error) {
 	// filepath '-f'
 	fpath := flag.String("f", "", "path to target file")
 	// range '-r'
@@ -36,30 +51,31 @@ func GetCliArgs() (CliArgs, error) {
 
 	flag.Parse()
 
-	return CliArgs{
-		Filepath:        *fpath,
-		Linerange:       *linerange,
-		Line:            *line,
-		Offset:          *offset,
-		Start:           *startline,
-		End:             *endline,
-		DisplayLinenums: *linenums,
-		Unmatched:       flag.Args(),
+	return cliArgs{
+		filepath:        *fpath,
+		linerange:       *linerange,
+		line:            *line,
+		offset:          *offset,
+		start:           *startline,
+		end:             *endline,
+		displayLinenums: *linenums,
+		unmatched:       flag.Args(),
 	}, nil
 }
 
-func ProcessCliArgs(args CliArgs) (string, dog.DogOptions, error) {
-	fpath := ""
+func processCliArgs(args cliArgs) (string, dog.DogOptions, error) {
+	fpath := args.filepath
 	// if filepath flag not found
-	if args.Filepath == "" {
+	if fpath == "" {
 		// check flag.Args
 		if isEmpty(flag.Args()) { // empty, error
 			return "", dog.DogOptions{}, fmt.Errorf("missing arg filepath")
 		} else { // not empty, take first as filepath
 			fpath = flag.Args()[0]
 		}
-	} else {
 	}
+
+	// TODO: process other args
 
 	return fpath, dog.DogOptions{}, nil
 }
